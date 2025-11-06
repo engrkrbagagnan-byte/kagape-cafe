@@ -1,0 +1,1151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Menu | Kagape Café</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <nav class="nav-bar">
+      <h1 class="brand">
+        <a href="index.html">
+          <img src="images/logo.jpg" alt="Kagape Café" class="brand-logo">
+          <span class="visually-hidden">Kagape Café</span>
+        </a>
+      </h1>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="menu.html" class="active">Menu</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="contact.html">Contact</a></li>
+        <li>
+          <button id="cartButton" class="cart-btn" aria-label="Shopping cart">
+            <span class="cart-icon">🛒</span>
+            <span class="cart-count">0</span>
+          </button>
+        </li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Item Modal -->
+  <div id="itemModal" class="modal" aria-hidden="true">
+    <div class="modal-content">
+      <button class="close-modal" aria-label="Close modal">&times;</button>
+      <div class="modal-body">
+        <div class="modal-image">
+          <img src="" alt="" id="modalImage">
+        </div>
+        <div class="modal-details">
+          <h3 id="modalTitle"></h3>
+          <p id="modalDescription"></p>
+          <div class="modal-options">
+            <div class="temp-options">
+              <button class="temp-btn active" data-temp="hot">Hot</button>
+              <button class="temp-btn" data-temp="iced">Iced</button>
+            </div>
+            <div class="sweetness-options">
+              <button class="sweetness-btn" data-sweetness="less">Less Sweet</button>
+              <button class="sweetness-btn active" data-sweetness="normal">Normal</button>
+              <button class="sweetness-btn" data-sweetness="more">More Sweet</button>
+            </div>
+            <div class="extras-options">
+              <label class="extras-checkbox">
+                <input type="checkbox" name="extras" value="espresso" data-price="30">
+                Add Espresso Shot (+₱30)
+              </label>
+              <label class="extras-checkbox">
+                <input type="checkbox" name="extras" value="oatmilk" data-price="40">
+                Sub Oat Milk (+₱40)
+              </label>
+            </div>
+            <div class="quantity-selector">
+              <button class="quantity-btn" data-action="decrease">-</button>
+              <input type="number" id="quantityInput" value="1" min="1" max="10">
+              <button class="quantity-btn" data-action="increase">+</button>
+            </div>
+          </div>
+          <div class="modal-price">
+            <span class="base-price" id="modalPrice"></span>
+            <span class="total-price" id="modalTotalPrice"></span>
+          </div>
+          <button class="btn add-to-cart-btn">Add to Cart</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Shopping Cart Sidebar -->
+  <div id="cartSidebar" class="cart-sidebar" aria-hidden="true">
+    <div class="cart-header">
+      <h3>Your Order</h3>
+      <div class="cart-header-buttons">
+        <button class="clear-cart" id="clearCart" aria-label="Clear cart">Clear All</button>
+        <button class="close-cart" aria-label="Close cart">&times;</button>
+      </div>
+    </div>
+    <div class="cart-items">
+      <!-- Cart items will be dynamically added here -->
+    </div>
+    <div class="cart-summary">
+      <div class="cart-total">
+        <span>Total</span>
+        <span id="cartTotal">₱0.00</span>
+      </div>
+      <button id="checkoutBtn" class="btn checkout-btn" disabled>Proceed to Checkout</button>
+    </div>
+  </div>
+
+  <!-- Checkout Modal -->
+  <div id="checkoutModal" class="modal checkout-modal" aria-hidden="true">
+    <div class="modal-content">
+      <button class="close-modal" aria-label="Close modal">&times;</button>
+      <div class="modal-body">
+        <h3>Complete Your Order</h3>
+        <form id="checkoutForm">
+          <!-- Customer Information -->
+          <div class="form-section">
+            <h4>Customer Information</h4>
+            <div class="form-group">
+              <label for="name">Full Name *</label>
+              <input type="text" id="name" name="name" required 
+                placeholder="Enter your full name">
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="email">Email *</label>
+                <input type="email" id="email" name="email" required 
+                  placeholder="your@email.com">
+              </div>
+              <div class="form-group">
+                <label for="phone">Phone Number *</label>
+                <input type="tel" id="phone" name="phone" required 
+                  placeholder="e.g., 09123456789"
+                  pattern="[0-9]{11}">
+              </div>
+            </div>
+          </div>
+
+          <!-- Delivery Information -->
+          <div class="form-section">
+            <h4>Delivery Address</h4>
+            <div class="form-group">
+              <label for="street">Street Address *</label>
+              <input type="text" id="street" name="street" required 
+                placeholder="House/Unit No., Street Name">
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="barangay">Barangay *</label>
+                <input type="text" id="barangay" name="barangay" required 
+                  placeholder="Barangay">
+              </div>
+              <div class="form-group">
+                <label for="city">City *</label>
+                <input type="text" id="city" name="city" required 
+                  placeholder="City">
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="landmarks">Landmarks/Notes</label>
+              <textarea id="landmarks" name="landmarks" rows="2" 
+                placeholder="Nearby landmarks or delivery instructions"></textarea>
+            </div>
+          </div>
+
+          <!-- Payment Information -->
+          <div class="form-section">
+            <h4>Payment Method</h4>
+            <div class="payment-options">
+              <div class="payment-option">
+                <input type="radio" id="cashPayment" name="paymentMethod" value="cash" required>
+                <label for="cashPayment">
+                  <span class="payment-icon">💵</span>
+                  Cash on Delivery
+                </label>
+              </div>
+              <div class="payment-option">
+                <input type="radio" id="gcashPayment" name="paymentMethod" value="gcash">
+                <label for="gcashPayment">
+                  <span class="payment-icon">📱</span>
+                  GCash
+                  <span class="payment-number">0912-345-6789</span>
+                </label>
+              </div>
+              <div class="payment-option">
+                <input type="radio" id="bankPayment" name="paymentMethod" value="bank">
+                <label for="bankPayment">
+                  <span class="payment-icon">🏦</span>
+                  Bank Transfer
+                  <span class="payment-number">BDO: 1234-5678-9012</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Discount Code -->
+          <div class="form-section">
+            <h4>Discount Code</h4>
+            <div class="form-group discount-group">
+              <input type="text" id="discountCode" name="discountCode" 
+                placeholder="Enter discount code">
+              <button type="button" class="btn btn-outline" id="applyDiscount">Apply</button>
+            </div>
+          </div>
+
+          <!-- Order Summary -->
+          <div class="order-summary">
+            <h4>Review Your Order</h4>
+            <div class="order-items-container">
+              <div id="orderItems" class="order-items-list"></div>
+            </div>
+            <div class="summary-calculations">
+              <div class="summary-subtotal">
+                <span>Subtotal</span>
+                <span id="summarySubtotal">₱0.00</span>
+              </div>
+              <div class="summary-discount hidden">
+                <span>Discount</span>
+                <span id="summaryDiscount">-₱0.00</span>
+              </div>
+              <div class="summary-total">
+                <span>Total</span>
+                <span id="summaryTotal">₱0.00</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-footer">
+            <p class="required-note">* Required fields</p>
+            <button type="submit" class="btn btn-primary">Place Order</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <main>
+    <section class="page-header">
+      <h2>Our Menu</h2>
+      <p>Every cup is crafted with love and purpose.</p>
+      
+      <!-- Search bar -->
+      <div class="search-container">
+        <div class="search-box">
+          <input type="text" id="menuSearch" placeholder="Search our menu..." aria-label="Search menu items">
+          <button class="search-icon" aria-label="Search">
+            <svg width="20" height="20" viewBox="0 0 20 20">
+              <path d="M8.5 3a5.5 5.5 0 0 1 4.227 9.02l4.127 4.126a.5.5 0 0 1-.638.765l-.07-.057-4.126-4.127A5.5 5.5 0 1 1 8.5 3Zm0 1a4.5 4.5 0 1 0 0 9 4.5 4.5 0 0 0 0-9Z" fill="currentColor"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+      
+      <!-- Quick category navigation -->
+      <nav class="menu-nav" aria-label="Menu categories">
+        <button class="category-btn active" data-category="all">All Items</button>
+        <button class="category-btn" data-category="signature">✨ Signatures</button>
+        <button class="category-btn" data-category="espresso">☕ Espresso</button>
+        <button class="category-btn" data-category="matcha">🍵 Matcha</button>
+      </nav>
+    </section>
+
+    <!-- Menu categories -->
+    <div class="menu-categories">
+      <!-- ✨ Signature Drinks -->
+    <section class="menu-category" id="signature">
+      <h2>✨ Signature Drinks</h2>
+      <div class="menu-grid large">
+        <div class="menu-item" data-category="signature matcha">
+          <div class="item-image">
+            <img 
+              src="images/pistachio-verde.jpg" 
+              alt="Pistachio Verde"
+              onerror="this.onerror=null; console.error('Failed to load image:', this.src);"
+              style="border: 1px solid #ccc;"
+            >
+            <div class="item-options">
+              <span class="temp hot">Hot</span>
+              <span class="temp iced">Iced</span>
+            </div>
+          </div>
+          <div class="item-content">
+            <h3>Pistachio Verde</h3>
+            <p>Pistachio Matcha — nutty, creamy, and vibrant.</p>
+            <div class="item-footer">
+              <span class="price">₱169</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="menu-item" data-category="signature espresso">
+          <div class="item-image">
+            <img src="images/pistachio-crescendo.jpg" alt="Pistachio Crescendo">
+            <div class="item-options">
+              <span class="temp hot">Hot</span>
+              <span class="temp iced">Iced</span>
+            </div>
+          </div>
+          <div class="item-content">
+            <h3>Pistachio Crescendo</h3>
+            <p>Pistachio Latte — rich espresso with pistachio blend.</p>
+            <div class="item-footer">
+              <span class="price">₱159</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="menu-item" data-category="signature matcha">
+          <div class="item-image">
+            <img src="images/verdant-grace.jpg" alt="Verdant Grace">
+            <div class="item-options">
+              <span class="temp hot">Hot</span>
+              <span class="temp iced">Iced</span>
+            </div>
+          </div>
+          <div class="item-content">
+            <h3>Verdant Grace</h3>
+            <p>Refreshing matcha with silky cream and sweet harmony.</p>
+            <div class="item-footer">
+              <span class="price">₱139</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="menu-item" data-category="signature espresso">
+          <div class="item-image">
+            <img src="images/golden-hour.jpg" alt="Golden Hour">
+            <div class="item-options">
+              <span class="temp hot">Hot</span>
+              <span class="temp iced">Iced</span>
+            </div>
+          </div>
+          <div class="item-content">
+            <h3>Golden Hour</h3>
+            <p>Hazelnut Caramel Latte — your perfect sunset sip.</p>
+            <div class="item-footer">
+              <span class="price">₱129</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ☕ Espresso-Based Drinks -->
+    <section class="menu-category" id="espresso">
+      <h2>☕ Espresso-Based Drinks</h2>
+      <div class="menu-grid large">
+        <div class="menu-item" data-category="espresso">
+          <div class="item-image">
+            <img src="images/tres-leches.jpg" alt="Tres Leches">
+            <div class="item-options">
+              <span class="temp hot">Hot</span>
+              <span class="temp iced">Iced</span>
+            </div>
+          </div>
+          <div class="item-content">
+            <h3>Tres Leches</h3>
+            <p>Creamy sweetness in every sip.</p>
+            <div class="item-footer">
+              <span class="price">₱139</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="menu-item" data-category="espresso">
+          <div class="item-image">
+            <img src="images/caramel-macchiato.jpg" alt="Caramel Macchiato">
+            <div class="item-options">
+              <span class="temp hot">Hot</span>
+              <span class="temp iced">Iced</span>
+            </div>
+          </div>
+          <div class="item-content">
+            <h3>Caramel Macchiato</h3>
+            <p>Velvety caramel layered with espresso and milk.</p>
+            <div class="item-footer">
+              <span class="price">₱129</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="menu-item" data-category="espresso">
+          <div class="item-image">
+            <img src="images/spanish-latte.jpg" alt="Spanish Latte">
+            <div class="item-options">
+              <span class="temp hot">Hot</span>
+              <span class="temp iced">Iced</span>
+            </div>
+          </div>
+          <div class="item-content">
+            <h3>Spanish Latte</h3>
+            <p>Sweetened milk and espresso — smooth and balanced.</p>
+            <div class="item-footer">
+              <span class="price">₱119</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="menu-item" data-category="espresso">
+          <div class="item-image">
+            <img src="images/cafe-latte.jpg" alt="Café Latte">
+            <div class="item-options">
+              <span class="temp hot">Hot</span>
+              <span class="temp iced">Iced</span>
+            </div>
+          </div>
+          <div class="item-content">
+            <h3>Café Latte</h3>
+            <p>Classic espresso with steamed milk and love.</p>
+            <div class="item-footer">
+              <span class="price">₱99</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="menu-item" data-category="espresso">
+          <div class="item-image">
+            <img src="images/americano.jpg" alt="Americano">
+            <div class="item-options">
+              <span class="temp hot">Hot</span>
+              <span class="temp iced">Iced</span>
+            </div>
+          </div>
+          <div class="item-content">
+            <h3>Americano</h3>
+            <p>Pure espresso with water for a clean, bold flavor.</p>
+            <div class="item-footer">
+              <span class="price">₱79</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 🍵 Matcha Creations -->
+    <section class="menu-category" id="matcha">
+      <h2>🍵 Matcha Creations</h2>
+      <div class="menu-grid large">
+        <div class="menu-item" data-category="matcha">
+          <div class="item-image">
+            <img src="images/matcha-latte.jpg" alt="Matcha Latte">
+            <div class="item-options">
+              <span class="temp hot">Hot</span>
+              <span class="temp iced">Iced</span>
+            </div>
+          </div>
+          <div class="item-content">
+            <h3>Matcha Latte</h3>
+            <p>Japanese matcha blended with creamy milk and love.</p>
+            <div class="item-footer">
+              <span class="price">₱129</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="menu-item" data-category="matcha">
+          <div class="item-image">
+            <img src="images/strawberry-matcha.jpg" alt="Strawberry Matcha">
+            <div class="item-options">
+              <span class="temp hot">Hot</span>
+              <span class="temp iced">Iced</span>
+            </div>
+          </div>
+          <div class="item-content">
+            <h3>Strawberry Matcha</h3>
+            <p>Vibrant matcha paired with strawberry sweetness.</p>
+            <div class="item-footer">
+              <span class="price">₱129</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>© 2025 Kagape Café | Brewing God's Love Daily</p>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const categoryBtns = document.querySelectorAll('.category-btn');
+      const menuItems = document.querySelectorAll('.menu-item');
+      const searchInput = document.getElementById('menuSearch');
+  const itemModal = document.getElementById('itemModal');
+  const cartSidebar = document.getElementById('cartSidebar');
+  const cartButton = document.getElementById('cartButton');
+  const cartCount = document.querySelector('.cart-count');
+  const cartItems = document.querySelector('.cart-items');
+  const cartTotal = document.getElementById('cartTotal');
+  const checkoutBtn = document.getElementById('checkoutBtn');
+  const checkoutModal = document.getElementById('checkoutModal');
+  const addToCartBtn = document.querySelector('.add-to-cart-btn');
+      
+  let activeCategory = 'all';
+  let searchTerm = '';
+  let cart = JSON.parse(localStorage.getItem('cart')) || [];
+  let editingIndex = null; // when set, modal is editing an existing cart item
+      
+      // Update cart count and enable/disable checkout button
+      function updateCartUI() {
+        // Persist cart and update the more feature-rich UI pieces
+        localStorage.setItem('cart', JSON.stringify(cart));
+        updateCartCount();
+        updateCartItems();
+      }
+      
+      function filterMenuItems() {
+        menuItems.forEach(item => {
+          const name = item.querySelector('h3').textContent.toLowerCase();
+          const description = item.querySelector('p').textContent.toLowerCase();
+          const matchesSearch = !searchTerm || 
+            name.includes(searchTerm) || 
+            description.includes(searchTerm);
+          
+          const matchesCategory = activeCategory === 'all' || 
+            item.dataset.category.includes(activeCategory);
+
+          if (matchesSearch && matchesCategory) {
+            item.style.display = '';
+            // Fade in animation
+            item.style.opacity = '0';
+            setTimeout(() => {
+              item.style.opacity = '1';
+              item.style.transition = 'opacity 0.3s ease';
+            }, 10);
+          } else {
+            item.style.display = 'none';
+          }
+        });
+      }
+
+      // Handle category button clicks
+      categoryBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          categoryBtns.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          activeCategory = btn.dataset.category;
+          filterMenuItems();
+        });
+      });
+
+      // Handle search input
+      let searchTimeout;
+      searchInput.addEventListener('input', (e) => {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+          searchTerm = e.target.value.toLowerCase().trim();
+          filterMenuItems();
+        }, 300);
+      });
+
+      // Handle menu item clicks
+      menuItems.forEach(item => {
+        item.addEventListener('click', () => {
+          const name = item.querySelector('h3').textContent;
+          const description = item.querySelector('p').textContent;
+          const price = parseFloat(item.querySelector('.price').textContent.replace('₱', ''));
+          const image = item.querySelector('img').src;
+          
+          // Update modal content
+          document.getElementById('modalTitle').textContent = name;
+          document.getElementById('modalDescription').textContent = description;
+          document.getElementById('modalPrice').textContent = `₱${price.toFixed(2)}`;
+          document.getElementById('modalImage').src = image;
+          document.getElementById('modalImage').alt = name;
+          
+          // Reset modal options
+          document.getElementById('quantityInput').value = '1';
+          
+          // Reset temperature
+          document.querySelectorAll('.temp-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.temp === 'hot');
+          });
+
+          // Reset sweetness
+          document.querySelectorAll('.sweetness-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.sweetness === 'normal');
+          });
+
+          // Clear any editing state (we're adding a new item)
+          editingIndex = null;
+          if (addToCartBtn) addToCartBtn.textContent = 'Add to Cart';
+
+          // Reset extras
+          document.querySelectorAll('input[name="extras"]').forEach(checkbox => {
+            checkbox.checked = false;
+          });
+
+          // Reset prices
+          document.getElementById('modalTotalPrice').textContent = document.getElementById('modalPrice').textContent;
+          
+          // Show modal
+          itemModal.classList.add('active');
+          document.body.style.overflow = 'hidden';
+        });
+      });
+
+      // If page opened with ?item=Name, try to find and open that item in the modal
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const targetName = params.get('item');
+        if (targetName) {
+          // decode and match against menu item titles
+          const decoded = decodeURIComponent(targetName).toLowerCase();
+          const found = Array.from(menuItems).find(mi => {
+            const titleEl = mi.querySelector('h3');
+            return titleEl && titleEl.textContent.trim().toLowerCase() === decoded;
+          });
+          if (found) {
+            // simulate click to open modal with same behavior
+            found.click();
+            // remove param from URL so repeated reload doesn't reopen unexpectedly
+            const url = new URL(window.location.href);
+            url.searchParams.delete('item');
+            window.history.replaceState({}, document.title, url.toString());
+          }
+        }
+      } catch (err) {
+        // ignore URL parsing errors
+        console.warn('Could not auto-open menu item from URL', err);
+      }
+
+      // Handle modal close
+      document.querySelectorAll('.close-modal').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          const modal = btn.closest('.modal');
+          modal.classList.remove('active');
+          document.body.style.overflow = '';
+        });
+      });
+
+      // Handle temperature selection
+      document.querySelectorAll('.temp-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.temp-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+        });
+      });
+
+      // Handle quantity input
+      document.querySelectorAll('.quantity-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const input = document.getElementById('quantityInput');
+          const currentValue = parseInt(input.value);
+          if (btn.dataset.action === 'decrease' && currentValue > 1) {
+            input.value = currentValue - 1;
+          } else if (btn.dataset.action === 'increase' && currentValue < 10) {
+            input.value = currentValue + 1;
+          }
+        });
+      });
+
+      // Function to calculate total price including extras
+      function calculateTotalPrice(basePrice, extras) {
+        let total = basePrice;
+        extras.forEach(extra => {
+          if (extra === 'espresso') total += 30;
+          if (extra === 'oatmilk') total += 40;
+        });
+        return total;
+      }
+
+      // Handle modal price updates when extras are changed
+      document.querySelectorAll('input[name="extras"]').forEach(checkbox => {
+        checkbox.addEventListener('change', () => {
+          const basePrice = parseFloat(document.getElementById('modalPrice').textContent.replace('₱', ''));
+          const extras = Array.from(document.querySelectorAll('input[name="extras"]:checked')).map(cb => cb.value);
+          const totalPrice = calculateTotalPrice(basePrice, extras);
+          document.getElementById('modalTotalPrice').textContent = `₱${totalPrice.toFixed(2)}`;
+        });
+      });
+
+      // Handle sweetness selection
+      document.querySelectorAll('.sweetness-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.sweetness-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+        });
+      });
+
+      // Handle add to cart (also handles saving edits when editingIndex != null)
+      addToCartBtn.addEventListener('click', () => {
+        const name = document.getElementById('modalTitle').textContent;
+        const basePrice = parseFloat(document.getElementById('modalPrice').textContent.replace('₱', ''));
+        const quantity = parseInt(document.getElementById('quantityInput').value);
+        const temperature = document.querySelector('.temp-btn.active').dataset.temp;
+        const sweetness = document.querySelector('.sweetness-btn.active').dataset.sweetness;
+        const extras = Array.from(document.querySelectorAll('input[name="extras"]:checked')).map(cb => cb.value);
+        const price = calculateTotalPrice(basePrice, extras);
+        const image = document.getElementById('modalImage').src;
+
+        const newItem = {
+          name,
+          basePrice,
+          price,
+          quantity,
+          temperature,
+          sweetness,
+          extras,
+          image
+        };
+
+        if (editingIndex !== null && typeof editingIndex === 'number') {
+          // replace existing item
+          cart[editingIndex] = newItem;
+          editingIndex = null;
+          // restore add button label
+          addToCartBtn.textContent = 'Add to Cart';
+        } else {
+          cart.push(newItem);
+        }
+
+        updateCartUI();
+        itemModal.classList.remove('active');
+        cartSidebar.classList.add('active');
+        document.body.style.overflow = '';
+      });
+
+      // Function to update cart items display
+      function updateCartItems() {
+        cartItems.innerHTML = cart.map((item, index) => `
+          <div class="cart-item">
+            <div class="cart-item-image">
+              <img src="${item.image}" alt="${item.name}">
+            </div>
+            <div class="cart-item-details">
+              <h4>${item.name}</h4>
+              <div class="cart-item-options">
+                <div class="temp-toggle">
+                  <button class="temp-edit-btn ${item.temperature === 'hot' ? 'active' : ''}" 
+                          data-temp="hot" data-index="${index}">Hot</button>
+                  <button class="temp-edit-btn ${item.temperature === 'iced' ? 'active' : ''}" 
+                          data-temp="iced" data-index="${index}">Iced</button>
+                </div>
+                <div class="sweetness-options">
+                  <span class="sweetness-label">${item.sweetness} sweet</span>
+                </div>
+                ${item.extras && item.extras.length > 0 ? `
+                  <div class="extras-added">
+                    ${item.extras.map(extra => `
+                      <span class="extra-item">
+                        ${extra === 'espresso' ? '+ espresso shot' : 'oat milk'}
+                      </span>
+                    `).join('')}
+                  </div>
+                ` : ''}
+                <div class="quantity-edit">
+                  <button class="quantity-edit-btn" data-action="decrease" data-index="${index}">-</button>
+                  <span class="quantity-display">${item.quantity}</span>
+                  <button class="quantity-edit-btn" data-action="increase" data-index="${index}">+</button>
+                </div>
+              </div>
+              <div class="cart-item-price">
+                ${item.basePrice !== item.price ? `
+                  <span class="cart-item-base-price">₱${(item.basePrice * item.quantity).toFixed(2)}</span>
+                ` : ''}
+                <span class="cart-item-total-price">₱${(item.price * item.quantity).toFixed(2)}</span>
+              </div>
+            </div>
+            <div class="cart-item-actions">
+              <button class="edit-item-btn" data-index="${index}" aria-label="Edit item">
+                <span class="edit-icon">✏️</span>
+                Edit
+              </button>
+              <button class="remove-item-btn" data-index="${index}">
+                <span class="remove-icon">🗑️</span>
+                Remove from order
+              </button>
+            </div>
+          </div>
+        `).join('');
+
+        // Add event listeners for cart item editing
+        document.querySelectorAll('.cart-item').forEach(cartItem => {
+          // Temperature toggle
+          cartItem.querySelectorAll('.temp-edit-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+              const index = parseInt(e.target.dataset.index);
+              const newTemp = e.target.dataset.temp;
+              
+              // Update temperature
+              cart[index].temperature = newTemp;
+              localStorage.setItem('cart', JSON.stringify(cart));
+              
+              // Update UI
+              cartItem.querySelectorAll('.temp-edit-btn').forEach(b => {
+                b.classList.toggle('active', b.dataset.temp === newTemp);
+              });
+            });
+          });
+
+          // Quantity editing
+          cartItem.querySelectorAll('.quantity-edit-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+              const index = parseInt(e.target.dataset.index);
+              const action = e.target.dataset.action;
+              const currentQty = cart[index].quantity;
+              
+              if (action === 'decrease' && currentQty > 1) {
+                cart[index].quantity--;
+              } else if (action === 'increase' && currentQty < 10) {
+                cart[index].quantity++;
+              }
+              
+              // Update localStorage and UI
+              localStorage.setItem('cart', JSON.stringify(cart));
+              updateCartUI();
+              if (checkoutModal.classList.contains('active')) {
+                updateOrderSummary();
+              }
+            });
+          });
+
+          // Edit button - open modal pre-filled for editing this cart item
+          const editBtn = cartItem.querySelector('.edit-item-btn');
+          if (editBtn) {
+            editBtn.addEventListener('click', (e) => {
+              const idx = parseInt(e.target.closest('.edit-item-btn').dataset.index);
+              const it = cart[idx];
+              if (!it) return;
+
+              // Prefill modal fields
+              document.getElementById('modalTitle').textContent = it.name;
+              if (document.getElementById('modalDescription')) {
+                // keep existing description if available on cart item
+                document.getElementById('modalDescription').textContent = it.description || '';
+              }
+              document.getElementById('modalPrice').textContent = `₱${it.basePrice.toFixed(2)}`;
+              document.getElementById('modalImage').src = it.image;
+              document.getElementById('modalImage').alt = it.name;
+
+              // Quantity
+              const qtyInput = document.getElementById('quantityInput');
+              if (qtyInput) qtyInput.value = it.quantity;
+
+              // Temperature
+              document.querySelectorAll('.temp-btn').forEach(b => b.classList.toggle('active', b.dataset.temp === it.temperature));
+
+              // Sweetness
+              document.querySelectorAll('.sweetness-btn').forEach(b => b.classList.toggle('active', b.dataset.sweetness === (it.sweetness || 'normal')));
+
+              // Extras
+              document.querySelectorAll('input[name="extras"]').forEach(cb => {
+                cb.checked = (it.extras || []).includes(cb.value);
+              });
+
+              // Update modal total price
+              const totalPrice = calculateTotalPrice(it.basePrice, it.extras || []);
+              const totalEl = document.getElementById('modalTotalPrice');
+              if (totalEl) totalEl.textContent = `₱${totalPrice.toFixed(2)}`;
+
+              // Set editing index and change button label
+              editingIndex = idx;
+              if (addToCartBtn) addToCartBtn.textContent = 'Save changes';
+
+              // Open modal
+              itemModal.classList.add('active');
+              cartSidebar.classList.remove('active');
+              document.body.style.overflow = 'hidden';
+            });
+          }
+
+          // Remove button
+          const removeBtn = cartItem.querySelector('.remove-item-btn');
+          removeBtn.addEventListener('click', (e) => {
+            const index = parseInt(e.target.closest('.remove-item-btn').dataset.index);
+            const item = cart[index];
+            
+            if (confirm(`Remove ${item.name} from your order?`)) {
+              // Show brief removal message
+              cartItem.style.backgroundColor = '#fff1f1';
+              cartItem.style.opacity = '0.5';
+              
+              setTimeout(() => {
+                cart.splice(index, 1);
+                localStorage.setItem('cart', JSON.stringify(cart));
+                updateCartCount();
+                updateCartItems();
+                if (checkoutModal.classList.contains('active')) {
+                  updateOrderSummary();
+                }
+              }, 200);
+            }
+          });
+        });
+      }
+
+      // Function to update cart count and total
+      function updateCartCount() {
+        const itemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+        const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        
+        cartCount.textContent = itemCount;
+        cartTotal.textContent = `₱${total.toFixed(2)}`;
+        checkoutBtn.disabled = cart.length === 0;
+      }
+
+      // Function to clear cart
+      function clearCart() {
+        if (cart.length > 0) {
+          if (confirm('Are you sure you want to clear your cart?')) {
+            cart = [];
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCartCount();
+            updateCartItems();
+            if (checkoutModal.classList.contains('active')) {
+              updateOrderSummary();
+            }
+          }
+        }
+      }
+
+      // Update initial cart display
+      updateCartCount();
+      updateCartItems();
+
+      // Handle clear cart button click
+      document.getElementById('clearCart').addEventListener('click', clearCart);
+
+      // Handle cart button click
+      cartButton.addEventListener('click', () => {
+        cartSidebar.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      });
+
+      // Handle cart close
+      document.querySelector('.close-cart').addEventListener('click', () => {
+        cartSidebar.classList.remove('active');
+        document.body.style.overflow = '';
+      });
+
+      // Function to update order items in checkout
+      function updateCheckoutItems() {
+        const orderItems = document.getElementById('orderItems');
+        orderItems.innerHTML = cart.map((item, index) => `
+          <div class="order-item" data-index="${index}">
+            <div class="order-item-details">
+              <div class="order-item-main">
+                <img src="${item.image}" alt="${item.name}" class="order-item-image">
+                <div class="order-item-info">
+                  <h5>${item.name}</h5>
+                  <div class="order-item-controls">
+                    <div class="temperature-toggle">
+                      <button class="temp-btn-small ${item.temperature === 'hot' ? 'active' : ''}" 
+                              data-temp="hot" data-index="${index}">Hot</button>
+                      <button class="temp-btn-small ${item.temperature === 'iced' ? 'active' : ''}" 
+                              data-temp="iced" data-index="${index}">Iced</button>
+                    </div>
+                    <div class="quantity-adjuster">
+                      <button class="qty-btn" data-action="decrease" data-index="${index}">−</button>
+                      <span class="qty-display">${item.quantity}</span>
+                      <button class="qty-btn" data-action="increase" data-index="${index}">+</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="order-item-price">
+                <span>₱${(item.price * item.quantity).toFixed(2)}</span>
+                <button class="remove-btn" data-index="${index}" title="Remove item">×</button>
+              </div>
+            </div>
+          </div>
+        `).join('');
+
+        // Add event listeners for order item controls
+        orderItems.querySelectorAll('.order-item').forEach(item => {
+          const index = parseInt(item.dataset.index);
+
+          // Temperature toggle
+          item.querySelectorAll('.temp-btn-small').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+              const newTemp = e.target.dataset.temp;
+              cart[index].temperature = newTemp;
+              localStorage.setItem('cart', JSON.stringify(cart));
+              updateCheckoutItems();
+              updateOrderSummary();
+            });
+          });
+
+          // Quantity controls
+          item.querySelectorAll('.qty-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+              const action = e.target.dataset.action;
+              if (action === 'decrease' && cart[index].quantity > 1) {
+                cart[index].quantity--;
+              } else if (action === 'increase' && cart[index].quantity < 10) {
+                cart[index].quantity++;
+              }
+              localStorage.setItem('cart', JSON.stringify(cart));
+              updateCheckoutItems();
+              updateOrderSummary();
+            });
+          });
+
+          // Remove button
+          item.querySelector('.remove-btn').addEventListener('click', () => {
+            if (confirm('Remove this item from your order?')) {
+              cart.splice(index, 1);
+              localStorage.setItem('cart', JSON.stringify(cart));
+              if (cart.length === 0) {
+                checkoutModal.classList.remove('active');
+                document.body.style.overflow = '';
+              } else {
+                updateCheckoutItems();
+                updateOrderSummary();
+              }
+            }
+          });
+        });
+      }
+
+      // Handle checkout button
+      checkoutBtn.addEventListener('click', () => {
+        cartSidebar.classList.remove('active');
+        checkoutModal.classList.add('active');
+        updateCheckoutItems();
+        updateOrderSummary();
+      });
+
+      // Initialize discount codes
+      const discountCodes = {
+        'WELCOME10': { percentage: 10, description: '10% off' },
+        'SAVE20': { percentage: 20, description: '20% off' },
+        'NEWCUSTOMER': { percentage: 15, description: '15% off' }
+      };
+      
+      let appliedDiscount = null;
+      
+      // Handle discount code application
+      document.getElementById('applyDiscount').addEventListener('click', () => {
+        const codeInput = document.getElementById('discountCode');
+        const code = codeInput.value.trim().toUpperCase();
+        const discountInfo = discountCodes[code];
+        
+        if (discountInfo) {
+          appliedDiscount = {
+            code: code,
+            ...discountInfo
+          };
+          updateOrderSummary();
+          
+          // Show success message
+          alert(`Discount code applied: ${discountInfo.description}`);
+          codeInput.style.borderColor = '#4caf50';
+        } else {
+          appliedDiscount = null;
+          updateOrderSummary();
+          
+          // Show error message
+          alert('Invalid discount code');
+          codeInput.style.borderColor = '#f44336';
+        }
+      });
+      
+      // Update order summary with discount
+      function updateOrderSummary() {
+        const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        document.getElementById('summarySubtotal').textContent = `₱${subtotal.toFixed(2)}`;
+        
+        const discountSection = document.querySelector('.summary-discount');
+        const discountAmount = document.getElementById('summaryDiscount');
+        const totalAmount = document.getElementById('summaryTotal');
+        
+        if (appliedDiscount) {
+          const discount = (subtotal * appliedDiscount.percentage) / 100;
+          discountSection.classList.remove('hidden');
+          discountAmount.textContent = `-₱${discount.toFixed(2)}`;
+          totalAmount.textContent = `₱${(subtotal - discount).toFixed(2)}`;
+        } else {
+          discountSection.classList.add('hidden');
+          totalAmount.textContent = `₱${subtotal.toFixed(2)}`;
+        }
+      }
+
+      // Phone number validation
+      document.getElementById('phone').addEventListener('input', function(e) {
+        let value = e.target.value.replace(/\D/g, '');
+        if (value.length > 11) value = value.slice(0, 11);
+        e.target.value = value;
+      });
+
+      // Handle payment method selection
+      document.querySelectorAll('input[name="paymentMethod"]').forEach(radio => {
+        radio.addEventListener('change', (e) => {
+          const method = e.target.value;
+          const paymentInstructions = {
+            gcash: 'Please send your payment to GCash number: 0912-345-6789',
+            bank: 'Please transfer to BDO Account: 1234-5678-9012'
+          };
+          
+          if (method !== 'cash') {
+            alert(paymentInstructions[method]);
+          }
+        });
+      });
+
+      // Handle checkout form submission
+      document.getElementById('checkoutForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        // Gather form data
+        const formData = new FormData(e.target);
+        const orderData = {
+          customer: {
+            name: formData.get('name'),
+            email: formData.get('email'),
+            phone: formData.get('phone')
+          },
+          address: {
+            street: formData.get('street'),
+            barangay: formData.get('barangay'),
+            city: formData.get('city'),
+            landmarks: formData.get('landmarks')
+          },
+          payment: {
+            method: formData.get('paymentMethod'),
+            discountCode: formData.get('discountCode'),
+            subtotal: document.getElementById('summarySubtotal').textContent,
+            discount: appliedDiscount ? document.getElementById('summaryDiscount').textContent : '₱0.00',
+            total: document.getElementById('summaryTotal').textContent
+          },
+          items: cart,
+          orderDate: new Date().toISOString()
+        };
+        
+        // Here you would typically send orderData to a server
+        console.log('Order Data:', orderData);
+        
+        // Show success message with payment instructions
+        const paymentMethod = formData.get('paymentMethod');
+        let successMessage = 'Order placed successfully!\n\n';
+        
+        if (paymentMethod === 'gcash') {
+          successMessage += 'Please send your payment via GCash to: 0912-345-6789\n';
+          successMessage += 'After payment, please send a screenshot to our Facebook page.';
+        } else if (paymentMethod === 'bank') {
+          successMessage += 'Please transfer to BDO Account: 1234-5678-9012\n';
+          successMessage += 'After payment, please send a screenshot to our Facebook page.';
+        } else {
+          successMessage += 'Please prepare the exact amount for cash on delivery.';
+        }
+        
+        alert(successMessage);
+        
+        // Clear cart and close modal
+        cart = [];
+        updateCartUI();
+        checkoutModal.classList.remove('active');
+        document.body.style.overflow = '';
+      });
+
+      // Initialize cart UI
+      updateCartUI();
+    });
+  </script>
+</body>
+</html>
