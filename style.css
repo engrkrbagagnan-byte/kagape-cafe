@@ -109,7 +109,7 @@ img { max-width: 100%; height: auto; display: block; }
   }
 
   /* When open, ensure nav sits above other interactive elements */
-  .nav-links.open { display: flex; z-index: 1400; }
+  .nav-links.open { display: flex; z-index: 99999; pointer-events: auto; }
 
   .nav-links.open { display: flex; }
 

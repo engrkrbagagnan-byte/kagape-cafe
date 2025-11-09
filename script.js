@@ -264,7 +264,24 @@ document.addEventListener('DOMContentLoaded', () => {
     const mainNav = document.getElementById('mainNav');
     if (!navToggle || !mainNav) return;
 
-    navToggle.addEventListener('click', () => {
+    // Ensure nav starts closed when the page loads or when using browser back/forward cache
+    function closeNav() {
+      mainNav.classList.remove('open');
+      navToggle.setAttribute('aria-expanded', 'false');
+    }
+    closeNav();
+
+    // Support pointer events for consistent behavior across touch and mouse
+    let pointerHandled = false;
+    navToggle.addEventListener('pointerdown', (e) => {
+      pointerHandled = true;
+      e.preventDefault();
+      const isOpen = mainNav.classList.toggle('open');
+      navToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    });
+    // Fallback for devices that fire click but not pointer events
+    navToggle.addEventListener('click', (e) => {
+      if (pointerHandled) { pointerHandled = false; return; }
       const isOpen = mainNav.classList.toggle('open');
       navToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
     });
@@ -292,11 +309,17 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' || e.key === 'Esc') {
         if (mainNav.classList.contains('open')) {
-          mainNav.classList.remove('open');
-          navToggle.setAttribute('aria-expanded', 'false');
+          closeNav();
           navToggle.focus();
         }
       }
+    });
+
+    // When navigating via browser history (back/forward), some browsers restore DOM state from cache.
+    // Reset nav state on pageshow to ensure it's closed.
+    window.addEventListener('pageshow', (evt) => {
+      // pageshow persists when coming from BFCache; always close nav to avoid stale open state
+      closeNav();
     });
   })();
 });
