@@ -63,6 +63,11 @@ img { max-width: 100%; height: auto; display: block; }
   padding: 8px;
 }
 
+/* Ensure the header elements sit above page content when opened */
+.nav-bar { position: relative; z-index: 1200; }
+.hamburger { z-index: 1300; }
+.nav-links { z-index: 1250; }
+
 /* Mobile navigation - hidden by default and shown when .open is active */
 .nav-links {
   list-style: none;
@@ -102,6 +107,9 @@ img { max-width: 100%; height: auto; display: block; }
     max-width: 320px;
     box-shadow: 0 8px 20px rgba(0,0,0,0.15);
   }
+
+  /* When open, ensure nav sits above other interactive elements */
+  .nav-links.open { display: flex; z-index: 1400; }
 
   .nav-links.open { display: flex; }
 

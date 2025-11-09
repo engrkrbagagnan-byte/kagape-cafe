@@ -277,5 +277,26 @@ document.addEventListener('DOMContentLoaded', () => {
       mainNav.classList.remove('open');
       navToggle.setAttribute('aria-expanded', 'false');
     });
+
+    // Close the mobile nav when any link inside it is clicked (useful before navigation)
+    mainNav.querySelectorAll('a').forEach(a => {
+      a.addEventListener('click', () => {
+        if (mainNav.classList.contains('open')) {
+          mainNav.classList.remove('open');
+          navToggle.setAttribute('aria-expanded', 'false');
+        }
+      });
+    });
+
+    // Close on Escape key for accessibility
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' || e.key === 'Esc') {
+        if (mainNav.classList.contains('open')) {
+          mainNav.classList.remove('open');
+          navToggle.setAttribute('aria-expanded', 'false');
+          navToggle.focus();
+        }
+      }
+    });
   })();
 });
