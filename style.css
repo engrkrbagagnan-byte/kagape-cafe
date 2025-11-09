@@ -48,6 +48,99 @@ body {
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 
+/* Responsive helpers: mobile-first */
+/* Make images and containers fluid by default */
+img { max-width: 100%; height: auto; display: block; }
+
+/* Hamburger button (hidden on larger screens) */
+.hamburger {
+  display: none;
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 1.6rem;
+  cursor: pointer;
+  padding: 8px;
+}
+
+/* Mobile navigation - hidden by default and shown when .open is active */
+.nav-links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+
+/* Mobile-first layout adjustments */
+@media (max-width: 900px) {
+  /* Reduce header height and logo size */
+  .nav-bar { padding: 8px 14px; height: auto; }
+  .brand-logo { height: 48px; width: 140px; }
+  .nav-links { gap: 10px; }
+}
+
+/* For small tablets and phones: collapse nav into hamburger */
+@media (max-width: 700px) {
+  .hamburger { display: inline-flex; align-items: center; }
+
+  .nav-bar { align-items: center; }
+
+  /* Hide the regular nav links until toggled */
+  .nav-links {
+    position: absolute;
+    top: 72px;
+    right: 12px;
+    background: #6f4e37;
+    flex-direction: column;
+    align-items: flex-end;
+    padding: 10px;
+    border-radius: 8px;
+    display: none;
+    width: calc(100% - 40px);
+    max-width: 320px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  }
+
+  .nav-links.open { display: flex; }
+
+  .nav-links li { width: 100%; }
+  .nav-links a { display: block; width: 100%; padding: 10px 12px; }
+}
+
+/* Make hero section use a smaller min-height on small devices */
+@media (max-width: 900px) {
+  .hero { min-height: 420px; }
+  .hero h1 { font-size: 2.2rem; }
+  .hero-sub { font-size: 1rem; }
+}
+
+/* Menu items and grid responsiveness */
+@media (max-width: 700px) {
+  .menu-grid { gap: 12px; padding: 0 12px; }
+  .menu-item, .preview-card { width: 100%; }
+  .item-image { height: 220px; }
+  .modal-body { display: block; padding: 16px; }
+  .modal-image img { height: auto; max-height: 320px; }
+  .modal-content { width: 96%; max-width: 640px; }
+}
+
+/* Cart sidebar becomes full-screen drawer on small devices */
+@media (max-width: 700px) {
+  .cart-sidebar {
+    width: 100%;
+    right: -100%;
+  }
+  .cart-sidebar.active { right: 0; }
+}
+
+/* Ensure form fields stack nicely on small screens */
+@media (max-width: 700px) {
+  .form-row { display: block; }
+  .form-row .form-group { width: 100%; }
+}
+
 .visually-hidden {
   position: absolute;
   width: 1px;
@@ -552,7 +645,8 @@ body {
 .preview-card {
   background: #fff7f0 !important;
   padding: 12px !important;
-  width: 280px !important;
+  max-width: 280px !important;
+  width: 100% !important;
   text-align: center !important;
   border-radius: 12px !important;
   display: block !important;
@@ -607,7 +701,8 @@ body {
 
 /* Menu items */
 .menu-item {
-  width: 280px;
+  max-width: 280px;
+  width: 100%;
   background: #fff;
   border-radius: 12px;
   padding: 0;

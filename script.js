@@ -257,4 +257,25 @@ document.addEventListener('DOMContentLoaded', () => {
       // small UX: clicking "See all" (link) will scroll to full reviews; handled by anchor
     }
   })();
+
+  // --- Mobile nav toggle (accessible) ---
+  (function mobileNavToggle() {
+    const navToggle = document.getElementById('navToggle');
+    const mainNav = document.getElementById('mainNav');
+    if (!navToggle || !mainNav) return;
+
+    navToggle.addEventListener('click', () => {
+      const isOpen = mainNav.classList.toggle('open');
+      navToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    });
+
+    // Close nav when clicking outside on small screens
+    document.addEventListener('click', (e) => {
+      if (!mainNav.classList.contains('open')) return;
+      const target = e.target;
+      if (target === navToggle || navToggle.contains(target) || mainNav.contains(target)) return;
+      mainNav.classList.remove('open');
+      navToggle.setAttribute('aria-expanded', 'false');
+    });
+  })();
 });
