@@ -16,7 +16,7 @@ body {
   background: #6f4e37;
   color: #fff;
   padding: 10px 20px;
-  height: 90px; /* Increased height to accommodate larger logo */
+  height: 90px; /* Increased height to accommodate larger Logo */
 }
 .brand {
   margin: 0;
@@ -39,7 +39,7 @@ body {
   transform: scale(1.02);
 }
 
-.brand-logo {
+.brand-Logo {
   height: 65px;
   width: 180px; /* Set a fixed width for better control */
   object-fit: cover; /* This will crop and scale the image to fit */
